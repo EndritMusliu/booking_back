@@ -5,8 +5,7 @@ from .views import (
     PropertyTypeViewSet, PropertyViewSet, CategoryTypeViewSet, CategoryViewSet, RatingViewSet, ImageViewSet,
     FeedbackViewSet, FavoriteViewSet, RoomViewSet, RoomFeatureViewSet, FeaturesOfRoomViewSet,
     PropertyFeatureViewSet, FeaturesOfPropertyViewSet, BankDetailViewSet, BookingViewSet, FlightStatusViewSet,
-    FlightTypeViewSet, RouteViewSet, FlightAgencyViewSet, FlightViewSet, PriceViewSet, BookedFlightViewSet, SignUpView,
-    SignInView
+    FlightTypeViewSet, RouteViewSet, FlightAgencyViewSet, FlightViewSet, PriceViewSet, BookedFlightViewSet, UserCreate,LoginView
 )
 
 router = DefaultRouter()
@@ -42,6 +41,6 @@ router.register(r'bookedflights', BookedFlightViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('signup/', SignUpView.as_view(), name='signup'),
-    path('signin/', SignInView.as_view(), name='signin'),
+    path('signup/', UserCreate.as_view(), name='signup'),
+    path('signin/', LoginView.as_view(), name='signin'),
 ]

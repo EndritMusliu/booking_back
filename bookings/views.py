@@ -25,47 +25,7 @@ from rest_framework import generics, status,views, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
-from .serializers import SignUpSerializer, SignInSerializer
-
-# class SignUpView(generics.CreateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = SignUpSerializer
-#     permission_classes = [AllowAny]
-#
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.save()
-#         token, created = Token.objects.get_or_create(user=user)
-#         return Response({
-#             "user": {
-#                 "username": user.username,
-#                 "email": user.email,
-#                 "first_name": user.first_name,
-#                 "last_name": user.last_name,
-#             },
-#             "token": token.key
-#         }, status=status.HTTP_201_CREATED)
-#
-#
-# class SignInView(generics.GenericAPIView):
-#     serializer_class = SignInSerializer
-#     permission_classes = [AllowAny]
-#
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.validated_data["user"]
-#         token, created = Token.objects.get_or_create(user=user)
-#         return Response({
-#             "user": {
-#                 "username": user.username,
-#                 "email": user.email,
-#                 "first_name": user.first_name,
-#                 "last_name": user.last_name,
-#             },
-#             "token": token.key
-#         }, status=status.HTTP_200_OK)
+from django.contrib.auth import get_user_model
 
 
 class UserCreate(views.APIView):
@@ -100,7 +60,7 @@ class UserTypeViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
 

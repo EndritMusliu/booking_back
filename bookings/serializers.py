@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from .models import (
     UserType, User, Meal, Continent, Country, City, Street, PropertyType, Property,
@@ -13,46 +14,30 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
-class SignUpSerializer(serializers.ModelSerializer):
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'team']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
-        )
-        Token.objects.create(user=user)  # Automatically create a token for the user
+        user = User.objects.create_user(**validated_data)
         return user
 
-
-class SignInSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
-    def validate(self, data):
-        username = data.get("username")
-        password = data.get("password")
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    data["user"] = user
-                else:
-                    msg = "User account is disabled."
-                    raise serializers.ValidationError(msg)
-            else:
-                msg = "Unable to log in with provided credentials."
-                raise serializers.ValidationError(msg)
-        else:
-            msg = "Must include both username and password."
-            raise serializers.ValidationError(msg)
-        return data
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.team = validated_data.get('team', instance.team)
+        if validated_data.get('password'):
+            instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
 
 
 

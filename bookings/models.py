@@ -1,17 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class UserType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
 
-class User(models.Model):
-    username = models.CharField(max_length=255, blank=True, null=True)
-    firstname = models.CharField(max_length=255, blank=True, null=True)
-    lastname = models.CharField(max_length=255, blank=True, null=True)
-    date_of_birth = models.DateField()
-    email = models.EmailField(unique=True, blank=True, null=True)
-    password = models.CharField(max_length=128, blank=True, null=True)
+class User(AbstractUser):
     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, blank=True, null=True)
 
 
