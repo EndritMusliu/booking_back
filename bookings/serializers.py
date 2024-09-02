@@ -19,7 +19,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'team']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'user_type']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.email = validated_data.get('email', instance.email)
-        instance.team = validated_data.get('team', instance.team)
+        instance.user_type = validated_data.get('user_type', instance.user_type)
         if validated_data.get('password'):
             instance.set_password(validated_data['password'])
         instance.save()
