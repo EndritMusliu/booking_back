@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from .models import (
@@ -6,6 +7,54 @@ from .models import (
     FeaturesOfRoom, PropertyFeature, FeaturesOfProperty, BankDetail, Booking,
     FlightStatus, FlightType, Route, FlightAgency, Flight, Price, BookedFlight
 )
+
+
+from django.contrib.auth.models import User
+from rest_framework import serializers
+from rest_framework.authtoken.models import Token
+
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email', 'first_name', 'last_name']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
+        Token.objects.create(user=user)  # Automatically create a token for the user
+        return user
+
+
+class SignInSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        username = data.get("username")
+        password = data.get("password")
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    data["user"] = user
+                else:
+                    msg = "User account is disabled."
+                    raise serializers.ValidationError(msg)
+            else:
+                msg = "Unable to log in with provided credentials."
+                raise serializers.ValidationError(msg)
+        else:
+            msg = "Must include both username and password."
+            raise serializers.ValidationError(msg)
+        return data
+
+
 
 class UserTypeSerializer(serializers.ModelSerializer):
     class Meta:
