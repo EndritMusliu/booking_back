@@ -47,12 +47,11 @@ class UserTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(WritableNestedModelSerializer):
-    user_type = UserTypeSerializer(allow_null=True, required=False)
-
-    class Meta:
-        model = User
-        fields = '__all__'
+# class UserSerializer(WritableNestedModelSerializer):
+#
+#     class Meta:
+#         model = User
+#         fields = '__all__'
 
 
 class MealSerializer(serializers.ModelSerializer):

@@ -6,8 +6,11 @@ class UserType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
 
+# class User(AbstractUser):
+#     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, blank=True, null=True)
+
 class User(AbstractUser):
-    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, blank=True, null=True)
+    user_type = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Meal(models.Model):

@@ -2,6 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets
+from rest_framework.decorators import action
+
 from .models import (
     UserType, User, Meal, Continent, Country, City, Street, PropertyType, Property,
     CategoryType, Category, Rating, Image, Feedback, Favorite, Room, RoomFeature,
@@ -63,6 +65,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        user = self.request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
