@@ -6,7 +6,7 @@ class UserType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} - {self.name}"
 
 
 # class User(AbstractUser):
@@ -21,14 +21,14 @@ class Meal(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} - {self.name}"
 
 
 class Continent(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.name if self.name else "Unnamed Continent"
+        return f"{self.id} - {self.name}" if self.name else f"{self.id} - Unnamed Continent"
 
 
 
@@ -38,7 +38,7 @@ class Country(models.Model):
     continent = models.ForeignKey(Continent, on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name} - {self.continent}" if self.continent else self.name
+        return f"{self.id} - {self.name} - {self.continent}"
 
 
 class City(models.Model):
@@ -46,7 +46,7 @@ class City(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE,blank=True,null=True)
 
     def __str__(self):
-        return f"{self.name}, {self.country}" if self.country else self.name
+        return f"{self.id} -{self.name}, {self.country}" if self.country else self.name
 
 
 class Street(models.Model):
@@ -54,14 +54,14 @@ class Street(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name}, {self.city}" if self.city else self.name
+        return f"{self.id} -{self.name}, {self.city}" if self.city else self.name
 
 
 class PropertyType(models.Model):
     name = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id}-{self.name}"
 
 
 class Property(models.Model):
@@ -75,14 +75,14 @@ class Property(models.Model):
     check_out = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.property_name} - {self.user} - {self.property_type} in {self.street}"
+        return f"{self.id} -{self.property_name} - {self.user} - {self.property_type} in {self.street}"
 
 
 class CategoryType(models.Model):
     category = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return self.category
+        return f"{self.id} -{self.category}"
 
 
 class Category(models.Model):
@@ -91,7 +91,7 @@ class Category(models.Model):
     rating = models.CharField(max_length=10,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.category_type} - {self.property} - {self.rating} "
+        return f"{self.id} -{self.category_type} - {self.property} - {self.rating} "
 
 
 
@@ -101,7 +101,7 @@ class Rating(models.Model):
     num = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user} - {self.property} - {self.num}"
+        return f"{self.id} -{self.user} - {self.property} - {self.num}"
 
 
 class Image(models.Model):
@@ -115,7 +115,7 @@ class Feedback(models.Model):
     comment = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.property} - {self.user} - {self.comment}"
+        return f"{self.id} -{self.property} - {self.user} - {self.comment}"
 
 
 class Favorite(models.Model):
@@ -123,7 +123,7 @@ class Favorite(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user} - {self.property}"
+        return f"{self.id} -{self.user} - {self.property}"
 
 
 class Room(models.Model):
@@ -135,14 +135,14 @@ class Room(models.Model):
     description = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.property} - {self.price_p_n} - {self.amount_of_beds} - {self.room_name} - {self.description} - {self.room_size}"
+        return f"{self.id} -{self.property} - {self.price_p_n} - {self.amount_of_beds} - {self.room_name} - {self.description} - {self.room_size}"
 
 
 class RoomFeature(models.Model):
     name = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 class FeaturesOfRoom(models.Model):
@@ -150,14 +150,14 @@ class FeaturesOfRoom(models.Model):
     room_feature = models.ForeignKey(RoomFeature, on_delete=models.CASCADE,blank=True, null=True)
     is_available = models.BooleanField(default=False,blank=True, null=True)
     def __str__(self):
-        return f"{self.room} - {self.room_feature} - {self.is_available}"
+        return f"{self.id} -{self.room} - {self.room_feature} - {self.is_available}"
 
 
 class PropertyFeature(models.Model):
     name = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 class FeaturesOfProperty(models.Model):
@@ -165,7 +165,7 @@ class FeaturesOfProperty(models.Model):
     property_feature = models.ForeignKey(PropertyFeature, on_delete=models.CASCADE,blank=True, null=True)
     is_available = models.BooleanField(default=False,blank=True, null=True)
     def __str__(self):
-        return f"{self.property} - {self.property_feature} - {self.is_available}"
+        return f"{self.id} -{self.property} - {self.property_feature} - {self.is_available}"
 
 
 class BankDetail(models.Model):
@@ -173,7 +173,7 @@ class BankDetail(models.Model):
     account_number = models.CharField(max_length=50,blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True)
     def __str__(self):
-        return f"{self.account_name} - {self.account_number} - {self.user}"
+        return f"{self.id} -{self.account_name} - {self.account_number} - {self.user}"
 
 
 class Booking(models.Model):
@@ -182,14 +182,14 @@ class Booking(models.Model):
     final_price = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True)
     bank_account = models.ForeignKey(BankDetail, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
-        return f"{self.user} - {self.room} - {self.final_price}- {self.bank_account}"
+        return f"{self.id} -{self.user} - {self.room} - {self.final_price}- {self.bank_account}"
 
 
 class FlightStatus(models.Model):
     name = models.CharField(max_length=100,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 
@@ -197,21 +197,21 @@ class FlightType(models.Model):
     name = models.CharField(max_length=100,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 class Route(models.Model):
     name = models.CharField(max_length=100,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 class FlightAgency(models.Model):
     name = models.CharField(max_length=100,blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} -{self.name}"
 
 
 class Flight(models.Model):
@@ -226,7 +226,7 @@ class Flight(models.Model):
     end_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.flight_num} - {self.seat_no} - {self.flying_from} - {self.flying_to} - {self.flight_agency} - {self.start_time} - {self.end_time}- {self.start_date} - {self.end_date}"
+        return f"{self.id} -{self.flight_num} - {self.seat_no} - {self.flying_from} - {self.flying_to} - {self.flight_agency} - {self.start_time} - {self.end_time}- {self.start_date} - {self.end_date}"
 
 
 class Price(models.Model):
@@ -236,7 +236,7 @@ class Price(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.flight} - {self.flight_type} - {self.route} - {self.price}"
+        return f"{self.id} -{self.flight} - {self.flight_type} - {self.route} - {self.price}"
 
 
 class BookedFlight(models.Model):
@@ -248,4 +248,4 @@ class BookedFlight(models.Model):
     flight_status = models.ForeignKey(FlightStatus, on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
-        return f"{self.flight} - {self.user} - {self.route} - {self.final_price} - {self.bank_account} - {self.flight_status}"
+        return f"{self.id} -{self.flight} - {self.user} - {self.route} - {self.final_price} - {self.bank_account} - {self.flight_status}"

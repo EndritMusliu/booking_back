@@ -96,12 +96,11 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PropertySerializer(WritableNestedModelSerializer):
-    user = UserSerializer()
-    property_type = PropertyTypeSerializer()
-    street = StreetSerializer()
-    meal = MealSerializer()
-
+class PropertySerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    street = serializers.PrimaryKeyRelatedField(queryset=Street.objects.all())
+    meal = serializers.PrimaryKeyRelatedField(queryset=Meal.objects.all())
     class Meta:
         model = Property
         fields = '__all__'
@@ -171,10 +170,9 @@ class FeaturesOfRoomSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class RoomSerializer(WritableNestedModelSerializer):
-    property = PropertySerializer()
-    features_of_room = FeaturesOfRoomSerializer(many=True)
-
+class RoomSerializer(serializers.ModelSerializer):
+    property = serializers.PrimaryKeyRelatedField(queryset=Property.objects.all())
+    # features_of_room = serializers.PrimaryKeyRelatedField(queryset=FeaturesOfRoom.objects.all(), many=True)
     class Meta:
         model = Room
         fields = '__all__'
