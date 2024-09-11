@@ -97,10 +97,14 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
 
 
 class PropertySerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
-    street = serializers.PrimaryKeyRelatedField(queryset=Street.objects.all())
-    meal = serializers.PrimaryKeyRelatedField(queryset=Meal.objects.all())
+    user = UserSerializer()
+    property_type = PropertyTypeSerializer()
+    street = StreetSerializer()
+    meal = MealSerializer()
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    # street = serializers.PrimaryKeyRelatedField(queryset=Street.objects.all())
+    # meal = serializers.PrimaryKeyRelatedField(queryset=Meal.objects.all())
     class Meta:
         model = Property
         fields = '__all__'

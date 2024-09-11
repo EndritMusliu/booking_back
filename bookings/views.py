@@ -3,6 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework import generics
+from django.db.models import Q
 
 from .models import (
     UserType, User, Meal, Continent, Country, City, Street, PropertyType, Property,
@@ -74,6 +76,24 @@ class UserViewSet(viewsets.ModelViewSet):
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
+
+
+class PropertySearchView(generics.ListAPIView):
+    serializer_class = PropertySerializer
+
+    def get_queryset(self):
+        queryset = Property.objects.select_related('user', 'property_type', 'street__city__country', 'meal').all()
+
+
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+            queryset = queryset.filter(property_name__icontains=search_query)
+
+        return queryset
+
+
+
+
 
 
 class ContinentViewSet(viewsets.ModelViewSet):
