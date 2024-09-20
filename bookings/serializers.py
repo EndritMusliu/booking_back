@@ -25,8 +25,19 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        # Extract user_type ID from validated_data
+        user_type_id = validated_data.pop('user_type')
+
+        # Create the user, passing in the user_type_id and other validated data
+        user = User.objects.create_user(user_type=user_type_id, **validated_data)
+
+        # Set the password properly
+        if validated_data.get('password'):
+            user.set_password(validated_data['password'])
+
+        user.save()
         return user
+
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)

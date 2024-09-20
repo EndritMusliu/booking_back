@@ -8,12 +8,8 @@ class UserType(models.Model):
     def __str__(self):
         return f"{self.id} - {self.name}"
 
-
-# class User(AbstractUser):
-#     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, blank=True, null=True)
-
 class User(AbstractUser):
-    user_type = models.CharField(max_length=255, blank=True, null=True)
+    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, blank=True, null=True)
 
 
 
@@ -71,8 +67,7 @@ class Property(models.Model):
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE,blank=True, null=True)
     street = models.ForeignKey(Street, on_delete=models.CASCADE,blank=True, null=True)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE,blank=True, null=True)
-    check_in = models.DateTimeField(blank=True, null=True)
-    check_out = models.DateTimeField(blank=True, null=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True,null=True)
 
     def __str__(self):
         return f"{self.id} -{self.property_name} - {self.user} - {self.property_type} in {self.street}"
@@ -181,8 +176,14 @@ class Booking(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE,blank=True, null=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True)
     bank_account = models.ForeignKey(BankDetail, on_delete=models.CASCADE, null=True, blank=True)
+    check_in = models.DateTimeField(blank=True, null=True)
+    check_out = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'room')
+
     def __str__(self):
-        return f"{self.id} -{self.user} - {self.room} - {self.final_price}- {self.bank_account}"
+        return f"{self.id} -{self.user} - {self.room} - {self.final_price} - {self.bank_account} - {self.check_in} - {self.check_out}"
 
 
 class FlightStatus(models.Model):

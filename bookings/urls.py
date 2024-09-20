@@ -5,7 +5,8 @@ from .views import (
     PropertyTypeViewSet, PropertyViewSet, CategoryTypeViewSet, CategoryViewSet, RatingViewSet, ImageViewSet,
     FeedbackViewSet, FavoriteViewSet, RoomViewSet, RoomFeatureViewSet, FeaturesOfRoomViewSet,
     PropertyFeatureViewSet, FeaturesOfPropertyViewSet, BankDetailViewSet, BookingViewSet, FlightStatusViewSet,
-    FlightTypeViewSet, RouteViewSet, FlightAgencyViewSet, FlightViewSet, PriceViewSet, BookedFlightViewSet, UserCreate,LoginView,PropertySearchView
+    FlightTypeViewSet, RouteViewSet, FlightAgencyViewSet, FlightViewSet, PriceViewSet, BookedFlightViewSet, UserCreate,
+    LoginView, PropertySearchView, PropertiesByCityView
 )
 
 router = DefaultRouter()
@@ -45,5 +46,6 @@ urlpatterns = [
     path('signup/', UserCreate.as_view(), name='signup'),
     path('signin/', LoginView.as_view(), name='signin'),
     path('api/properties/search/', PropertySearchView.as_view(), name='property-search'),
+    path('properties-by-city/', PropertiesByCityView.as_view(), name='properties-by-city'),
 
 ]

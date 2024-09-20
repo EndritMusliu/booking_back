@@ -5,6 +5,10 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework import generics
 from django.db.models import Q
+from django.db.models import Count
+from rest_framework.views import APIView
+
+
 
 from .models import (
     UserType, User, Meal, Continent, Country, City, Street, PropertyType, Property,
@@ -59,6 +63,8 @@ class LoginView(views.APIView):
 
 
 class UserTypeViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.AllowAny]  # Allows access to anyone
+    authentication_classes = []
     queryset = UserType.objects.all()
     serializer_class = UserTypeSerializer
 
@@ -117,6 +123,8 @@ class StreetViewSet(viewsets.ModelViewSet):
 
 
 class PropertyTypeViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.AllowAny]  # Allows access to anyone
+    authentication_classes = []
     queryset = PropertyType.objects.all()
     serializer_class = PropertyTypeSerializer
 
@@ -224,3 +232,32 @@ class PriceViewSet(viewsets.ModelViewSet):
 class BookedFlightViewSet(viewsets.ModelViewSet):
     queryset = BookedFlight.objects.all()
     serializer_class = BookedFlightSerializer
+
+
+
+class PropertiesByCityView(APIView):
+
+    permission_classes = [permissions.AllowAny]  # Allows access to anyone
+    authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        # Aggregate properties by city and count the number of properties in each city
+        properties_by_city = Property.objects.values('street__city__name').annotate(
+            property_count=Count('id')
+        ).order_by('-property_count')  # You can order by count if needed
+
+        # Prepare the response data
+        response_data = []
+        for item in properties_by_city:
+            city_name = item['street__city__name']
+            property_count = item['property_count']
+            # Add additional city and country information if necessary
+            city = City.objects.filter(name=city_name).first()  # Fetch city information
+            response_data.append({
+                'city': city_name,
+                'country': city.country.name if city and city.country else '',
+                'property_count': property_count,
+                'image_url': f'/assets/cities/{city_name.lower()}.jpg'  # Assuming you store city images in assets
+            })
+
+        return Response(response_data)
