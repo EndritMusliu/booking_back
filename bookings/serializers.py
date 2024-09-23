@@ -207,22 +207,41 @@ class FeaturesOfPropertySerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class BankDetailSerializer(WritableNestedModelSerializer):
-    user = UserSerializer()
+class BankDetailSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)  # Make user read-only
 
     class Meta:
         model = BankDetail
-        fields = '__all__'
+        fields = ['id', 'account_name', 'account_number', 'account_cvc', 'user']
 
 
-class BookingSerializer(WritableNestedModelSerializer):
-    user = UserSerializer()
-    room = RoomSerializer()
-    bank_account = BankDetailSerializer()
+# class BookingSerializer(WritableNestedModelSerializer):
+#     user = UserSerializer()
+#     room = RoomSerializer()
+#     bank_account = BankDetailSerializer()
+#
+#     class Meta:
+#         model = Booking
+#         fields = '__all__'
+
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    # Set `user` as read-only because it will be automatically assigned in the view.
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    # Option 1: Use IDs for related fields (Room, BankDetail)
+    room = serializers.PrimaryKeyRelatedField(queryset=Room.objects.all())
+    bank_account = serializers.PrimaryKeyRelatedField(queryset=BankDetail.objects.all(), allow_null=True)
 
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = ['id', 'user', 'room', 'final_price', 'bank_account', 'check_in', 'check_out']
+
+    def create(self, validated_data):
+        # Automatically set the user to the currently authenticated user
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class FlightStatusSerializer(serializers.ModelSerializer):

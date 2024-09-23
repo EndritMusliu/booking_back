@@ -191,13 +191,58 @@ class FeaturesOfPropertyViewSet(viewsets.ModelViewSet):
 
 
 class BankDetailViewSet(viewsets.ModelViewSet):
-    queryset = BankDetail.objects.all()
     serializer_class = BankDetailSerializer
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access
+
+    def get_queryset(self):
+        # Return bank details for the authenticated user only
+        user = self.request.user
+        return BankDetail.objects.filter(user=user)
+
+    def create(self, request, *args, **kwargs):
+        # Automatically assign the user to the bank detail being created
+        data = request.data.copy()
+        data['user'] = request.user.id
+
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        # Save the bank detail with the user attached
+        serializer.save(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        # Ensure the user can only update their own bank details
+        instance = self.get_object()
+        if instance.user != request.user:
+            return Response({'error': 'You do not have permission to update this bank detail.'}, status=status.HTTP_403_FORBIDDEN)
+
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Ensure the user can only delete their own bank details
+        instance = self.get_object()
+        if instance.user != request.user:
+            return Response({'error': 'You do not have permission to delete this bank detail.'}, status=status.HTTP_403_FORBIDDEN)
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+    
+    def get_queryset(self):
+        # Return only the bookings for the authenticated user
+        return Booking.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Automatically associate the booking with the authenticated user
+        serializer.save(user=self.request.user)
 
 
 class FlightStatusViewSet(viewsets.ModelViewSet):

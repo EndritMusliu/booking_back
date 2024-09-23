@@ -166,6 +166,7 @@ class FeaturesOfProperty(models.Model):
 class BankDetail(models.Model):
     account_name = models.CharField(max_length=100,blank=True, null=True)
     account_number = models.CharField(max_length=50,blank=True, null=True)
+    account_cvc = models.CharField(max_length=50,blank=True,null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True)
     def __str__(self):
         return f"{self.id} -{self.account_name} - {self.account_number} - {self.user}"
