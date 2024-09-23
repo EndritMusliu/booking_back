@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework import generics
 from django.db.models import Q
 from django.db.models import Count
+from rest_framework.exceptions import NotAuthenticated
 from rest_framework.views import APIView
 
 
@@ -32,7 +33,7 @@ from django.contrib.auth.models import User
 from rest_framework import generics, status,views, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
 
 
@@ -261,3 +262,32 @@ class PropertiesByCityView(APIView):
             })
 
         return Response(response_data)
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    #permission_classes = [permissions.AllowAny]  # Allows access to anyone
+    #authentication_classes = []
+
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:  # Double-check if the user is authenticated
+            raise NotAuthenticated("You must be logged in to view this information.")
+
+        # Serialize user info
+        user_data = UserSerializer(user).data
+
+        # Fetch and serialize bank details
+        bank_details = BankDetail.objects.filter(user=user)
+        bank_data = BankDetailSerializer(bank_details, many=True).data
+
+        # Fetch and serialize bookings
+        bookings = Booking.objects.filter(user=user)
+        booking_data = BookingSerializer(bookings, many=True).data
+
+        return Response({
+            'user_info': user_data,
+            'bank_details': bank_data,
+            'bookings': booking_data
+        })
